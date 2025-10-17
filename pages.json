@@ -1,0 +1,42 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		// 登录页
+		{
+		  "path": "pages/login/login",
+		  "style": { "navigationBarTitleText": "登录" }
+		},
+		// 注册页
+		{
+		  "path": "pages/register/register",
+		  "style": { "navigationBarTitleText": "注册" }
+		},
+		// 重置密码
+		{
+		  "path": "pages/forgot-password/forgot-password",
+		  "style": { "navigationBarTitleText": "重置密码" }
+		},
+		// 聊天页面（主页面）
+		{
+		  "path": "pages/chat/chat",
+		  "style": { "navigationBarTitleText": "AI智能日志分析助手" }
+		},
+		// 报告中心（列表页）
+		{
+		  "path": "pages/reports/reports",
+		  "style": { "navigationBarTitleText": "报告中心" }
+		},
+		// 报告详情页
+		{
+		  "path": "pages/report-detail/report-detail",
+		  "style": { "navigationBarTitleText": "报告详情" }
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "智能客服系统",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"navigationStyle": "custom" 
+	},
+	"uniIdRouter": {}
+}
