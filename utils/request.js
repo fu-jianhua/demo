@@ -94,7 +94,7 @@ function handleTokenRefresh(options, originalRequest) {
 }
 
 // 刷新token函数
-function refreshToken() {
+export function refreshToken() {
   const refreshToken = uni.getStorageSync('refreshToken');
   return new Promise((resolve, reject) => {
     uni.request({

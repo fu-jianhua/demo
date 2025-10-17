@@ -248,7 +248,7 @@
 <script setup>
 import { ref, watch, onMounted, nextTick, computed } from 'vue';
 import TypewriterMarkdown from '@/components/TypewriterMarkdown.vue';
-import my_request from '@/utils/request';
+import my_request, { refreshToken } from '@/utils/request';
 
 const createSession = (name) =>
   my_request({ url: '/chat/sessions/new/', method: 'POST', data: {"name":name}});
@@ -501,19 +501,35 @@ async function streamAIResponse(sessionId, question, msgType, messageIndex) {
     // 初始化AI消息内容为空白，而不是光标
     messages.value[messageIndex].content = '';
     
-    fetch(`http://127.0.0.1:8000/api/chat/message/add/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${uni.getStorageSync('token')}`
-      },
-      body: JSON.stringify({
-        session_id: sessionId,
-        question: question,
-        message_type: msgType
-      })
-    })
-    .then(response => {
+    const doStreamFetch = () => {
+      return fetch(`http://127.0.0.1:8000/api/chat/message/add/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${uni.getStorageSync('token')}`
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          question: question,
+          message_type: msgType
+        })
+      });
+    };
+
+    let retried = false;
+
+    const start = () => doStreamFetch()
+    .then(async response => {
+      if (response.status === 401 && !retried) {
+        try {
+          const newToken = await refreshToken();
+          uni.setStorageSync('token', newToken);
+          retried = true;
+          return start();
+        } catch (err) {
+          throw err;
+        }
+      }
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -600,6 +616,8 @@ async function streamAIResponse(sessionId, question, msgType, messageIndex) {
       console.error('Fetch error:', error);
       reject(error);
     });
+
+    start();
   });
 }
 
